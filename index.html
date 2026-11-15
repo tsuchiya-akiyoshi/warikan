@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#19365e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="学会わりかん">
+<meta name="description" content="学会の懇親会向け。必要な区分だけを表示し、1人あたりの会費を500円・1000円単位で調整できる割り勘計算アプリ。">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" href="./icon-192.png" type="image/png">
+<title>学会わりかん｜区分別の会費計算</title>
+<style>
+:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;--ink:#21334d;--muted:#64758b;--line:#dbe5f1;--primary:#165fae;--surface:#fff;font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;color:var(--ink);background:#f3f6fb;padding-bottom:env(safe-area-inset-bottom,0px)}
+button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:3px solid #6ca8f8;outline-offset:2px}
+header{background:linear-gradient(120deg,#142b4b,#245281);color:#fff;padding:calc(25px + env(safe-area-inset-top,0px)) 16px 62px}
+header .inner,main{max-width:650px;margin:0 auto}h1{font-size:25px;letter-spacing:.02em;line-height:1.3;margin:0;display:flex;align-items:center;gap:12px}.brand-icon{display:grid;place-items:center;width:43px;height:43px;background:#ffd27c;color:#25364c;border-radius:14px;font-weight:850;font-size:26px}header p{font-size:13px;line-height:1.7;color:#d0e1f6;margin:12px 0 0}
+main{position:relative;margin-top:-43px;padding:0 13px 42px}.panel{background:#fff;border:1px solid #dfe7f0;border-radius:18px;box-shadow:0 5px 15px rgba(30,51,82,.04)}.bill-panel{padding:19px 18px}.field-title{display:block;color:#526b86;font-size:13px;font-weight:760}.bill-input-wrap{display:flex;align-items:center;gap:10px;border-bottom:2px solid #e3ebf5;margin-top:6px;padding-bottom:6px}.bill-input-wrap:focus-within{border-color:#2678d0}.yen{font-size:25px;font-weight:850;color:#647992}.total-input{width:100%;min-width:0;border:0;outline:0!important;font-size:33px;font-weight:830;color:#1b395c;background:transparent}.total-input::placeholder{color:#b0bccc}.tiny{font-size:11px;color:#8190a1;margin:10px 0 0;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.stat{min-width:0;background:white;border:1px solid #dfe7f0;border-radius:14px;padding:12px 9px}.stat-label{font-size:11px;color:#728096;font-weight:730;margin-bottom:6px}.stat-value{font-size:clamp(13px,3.8vw,19px);font-weight:850;line-height:1.4;overflow-wrap:anywhere}.stat-value.red{color:#b7323d}.stat-value.orange{color:#b46520}.stat-value.green{color:#157b59}
+h2{font-size:17px;margin:0;line-height:1.45}.section-head{margin:24px 3px 11px}.section-head p{margin:4px 0 0;color:#66788d;font-size:12px;line-height:1.5}.selector{padding:14px 14px 16px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.choice{display:flex;align-items:center;gap:8px;min-width:0;background:#f5f8fc;border:1px solid #e2e9f2;border-radius:11px;padding:10px 9px;cursor:pointer;min-height:47px}.choice:has(input:checked){background:#e9f3ff;border-color:#a4c9f3}.choice input{accent-color:#136fc6;flex:none;width:19px;height:19px;margin:0}.choice span{font-size:12px;line-height:1.4;font-weight:700;overflow-wrap:anywhere}.group-list{display:grid;gap:11px}.group{padding:16px}.group-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.group-name{font-size:16px;font-weight:820}.subtotal{font-size:13px;font-weight:770;color:#315d89;white-space:nowrap}.body-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;margin-top:16px}.field-label{font-size:12px;color:#6a788d;font-weight:760;margin-bottom:6px}.count-control{display:flex;align-items:center;gap:7px}.btn-step{border:1px solid #cfdfef;border-radius:11px;background:#eaf3fc;color:#215b96;font-weight:820;min-height:43px}.btn-step:active{background:#d5e8fd}.btn-step:disabled{opacity:.4;cursor:default}.btn-count{min-width:45px;max-width:45px;font-size:20px}.count-input{height:43px;width:100%;min-width:40px;background:#fff;color:#223951;border:1px solid #d6e2ef;border-radius:10px;text-align:center;font-size:18px;font-weight:750}.amount-input{height:43px;width:100%;border:1px solid #cbddeb;border-radius:10px;padding:8px 11px;text-align:right;font-size:20px;font-weight:820;color:#203c5b}.amount-input:focus{border-color:#4389d6}.money-button-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}.btn-money{width:100%;min-height:44px;border:1px solid #d1e1f1;border-radius:10px;background:#edf4fc;color:#245c92;font-size:14px;font-weight:790;padding:8px 2px}.btn-money.plus{background:#daebff;border-color:#b6d4f5;color:#145b9e}.btn-money:disabled{opacity:.4;cursor:default}.group-foot{border-top:1px dashed #e4ebf3;margin-top:13px;padding-top:11px;font-size:12px;color:#758398}.empty-message{padding:20px;text-align:center;color:#728094;font-size:13px}
+@media(max-width:380px){main{padding:0 10px 35px}.group{padding:13px}.body-grid{grid-template-columns:1fr 1.2fr;gap:9px}.count-control{gap:3px}.btn-count{min-width:33px;max-width:33px}.amount-input{font-size:18px}.choices{gap:6px}.choice{padding:8px 6px}.choice span{font-size:11px}.btn-money{font-size:12px}}
+@media(max-width:340px){.body-grid{grid-template-columns:1fr;gap:12px}.btn-count{min-width:42px;max-width:42px}}
+@media print{body{background:white}header{background:#fff;color:#222;padding:0 0 20px}header p{color:#555}main{margin:0}.selector,.money-button-row,.btn-count,.reset,.foot{display:none!important}.panel,.stat{box-shadow:none}.group{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="inner"><h1><span class="brand-icon" aria-hidden="true">¥</span>学会わりかん</h1><p>必要な区分を選んで、会計額と会費をボタンで調整。</p></div></header>
+<main>
+ <section class="panel bill-panel">
+  <label class="field-title" for="total">お会計の合計金額</label>
+  <div class="bill-input-wrap"><span class="yen" aria-hidden="true">¥</span><input id="total" class="total-input" type="text" inputmode="numeric" autocomplete="off" placeholder="例：45,000" aria-label="お会計の合計金額"></div>
+  <div class="money-button-row bill-button-row" role="group" aria-label="お会計金額の増減"><button class="btn-money" type="button" data-delta-bill="-10000">−10,000</button><button class="btn-money" type="button" data-delta-bill="-1000">−1,000</button><button class="btn-money plus" type="button" data-delta-bill="1000">＋1,000</button><button class="btn-money plus" type="button" data-delta-bill="10000">＋10,000</button></div>
+  <p class="tiny">合計金額は±1,000円／±10,000円で調整。人数・会費を入力すると過不足を表示します。</p>
+ </section>
+ <section class="stats" aria-label="集金状況">
+  <div class="stat"><div class="stat-label">人数</div><div class="stat-value" id="people">0人</div></div>
+  <div class="stat"><div class="stat-label">集金予定</div><div class="stat-value" id="collected">0円</div></div>
+  <div class="stat"><div class="stat-label">過不足</div><div class="stat-value" id="difference">—</div></div>
+ </section>
+ <div class="section-head"><h2>使う区分を選択</h2><p>チェックを入れた区分だけ、下に表示します。</p></div>
+ <section class="panel selector"><div class="choices">
+  <label class="choice"><input type="checkbox" data-toggle="employed" checked><span>職持ち</span></label>
+  <label class="choice"><input type="checkbox" data-toggle="student" checked><span>学生</span></label>
+  <label class="choice"><input type="checkbox" data-toggle="working_student"><span>学生（職持ち）</span></label>
+  <label class="choice"><input type="checkbox" data-toggle="nondrinker_employed"><span>飲まない人（職持ち）</span></label>
+  <label class="choice"><input type="checkbox" data-toggle="nondrinker_student"><span>飲まない人（学生）</span></label>
+ </div></section>
+ <div class="section-head"><h2>人数・1人あたりの会費</h2><p>人数は±1人、会費は±500円／±1,000円で変更できます。</p></div>
+ <section id="groups" class="group-list" aria-label="区分別の会費">
+  <article class="panel group" data-group="employed"><div class="group-head"><span class="group-name">職持ち</span><span class="subtotal">小計 0円</span></div><div class="body-grid"><div><div class="field-label">人数</div><div class="count-control"><button class="btn-step btn-count" data-delta-count="-1" type="button" aria-label="職持ちを1人減らす">−</button><input class="count-input" type="number" min="0" inputmode="numeric" data-field="count" value="0" aria-label="職持ちの人数"><button class="btn-step btn-count" data-delta-count="1" type="button" aria-label="職持ちを1人増やす">＋</button></div></div><div><label class="field-label" for="fee-employed">1人あたりの会費（円）</label><input id="fee-employed" class="amount-input" type="text" inputmode="numeric" data-field="amount" value="0"></div></div><div class="money-button-row"><button class="btn-money" data-delta-amount="-1000">−1,000</button><button class="btn-money" data-delta-amount="-500">−500</button><button class="btn-money plus" data-delta-amount="500">＋500</button><button class="btn-money plus" data-delta-amount="1000">＋1,000</button></div><div class="group-foot">0人 × 0円 = 0円</div></article>
+  <article class="panel group" data-group="student"><div class="group-head"><span class="group-name">学生</span><span class="subtotal">小計 0円</span></div><div class="body-grid"><div><div class="field-label">人数</div><div class="count-control"><button class="btn-step btn-count" data-delta-count="-1" type="button" aria-label="学生を1人減らす">−</button><input class="count-input" type="number" min="0" inputmode="numeric" data-field="count" value="0" aria-label="学生の人数"><button class="btn-step btn-count" data-delta-count="1" type="button" aria-label="学生を1人増やす">＋</button></div></div><div><label class="field-label" for="fee-student">1人あたりの会費（円）</label><input id="fee-student" class="amount-input" type="text" inputmode="numeric" data-field="amount" value="0"></div></div><div class="money-button-row"><button class="btn-money" data-delta-amount="-1000">−1,000</button><button class="btn-money" data-delta-amount="-500">−500</button><button class="btn-money plus" data-delta-amount="500">＋500</button><button class="btn-money plus" data-delta-amount="1000">＋1,000</button></div><div class="group-foot">0人 × 0円 = 0円</div></article>
+  <article class="panel group" data-group="working_student" hidden><div class="group-head"><span class="group-name">学生（職持ち）</span><span class="subtotal">小計 0円</span></div><div class="body-grid"><div><div class="field-label">人数</div><div class="count-control"><button class="btn-step btn-count" data-delta-count="-1" type="button">−</button><input class="count-input" type="number" min="0" inputmode="numeric" data-field="count" value="0" aria-label="学生（職持ち）の人数"><button class="btn-step btn-count" data-delta-count="1" type="button">＋</button></div></div><div><label class="field-label" for="fee-working_student">1人あたりの会費（円）</label><input id="fee-working_student" class="amount-input" type="text" inputmode="numeric" data-field="amount" value="0"></div></div><div class="money-button-row"><button class="btn-money" data-delta-amount="-1000">−1,000</button><button class="btn-money" data-delta-amount="-500">−500</button><button class="btn-money plus" data-delta-amount="500">＋500</button><button class="btn-money plus" data-delta-amount="1000">＋1,000</button></div><div class="group-foot">0人 × 0円 = 0円</div></article>
+  <article class="panel group" data-group="nondrinker_employed" hidden><div class="group-head"><span class="group-name">飲まない人（職持ち）</span><span class="subtotal">小計 0円</span></div><div class="body-grid"><div><div class="field-label">人数</div><div class="count-control"><button class="btn-step btn-count" data-delta-count="-1" type="button">−</button><input class="count-input" type="number" min="0" inputmode="numeric" data-field="count" value="0" aria-label="飲まない人（職持ち）の人数"><button class="btn-step btn-count" data-delta-count="1" type="button">＋</button></div></div><div><label class="field-label" for="fee-nondrinker_employed">1人あたりの会費（円）</label><input id="fee-nondrinker_employed" class="amount-input" type="text" inputmode="numeric" data-field="amount" value="0"></div></div><div class="money-button-row"><button class="btn-money" data-delta-amount="-1000">−1,000</button><button class="btn-money" data-delta-amount="-500">−500</button><button class="btn-money plus" data-delta-amount="500">＋500</button><button class="btn-money plus" data-delta-amount="1000">＋1,000</button></div><div class="group-foot">0人 × 0円 = 0円</div></article>
+  <article class="panel group" data-group="nondrinker_student" hidden><div class="group-head"><span class="group-name">飲まない人（学生）</span><span class="subtotal">小計 0円</span></div><div class="body-grid"><div><div class="field-label">人数</div><div class="count-control"><button class="btn-step btn-count" data-delta-count="-1" type="button">−</button><input class="count-input" type="number" min="0" inputmode="numeric" data-field="count" value="0" aria-label="飲まない人（学生）の人数"><button class="btn-step btn-count" data-delta-count="1" type="button">＋</button></div></div><div><label class="field-label" for="fee-nondrinker_student">1人あたりの会費（円）</label><input id="fee-nondrinker_student" class="amount-input" type="text" inputmode="numeric" data-field="amount" value="0"></div></div><div class="money-button-row"><button class="btn-money" data-delta-amount="-1000">−1,000</button><button class="btn-money" data-delta-amount="-500">−500</button><button class="btn-money plus" data-delta-amount="500">＋500</button><button class="btn-money plus" data-delta-amount="1000">＋1,000</button></div><div class="group-foot">0人 × 0円 = 0円</div></article>
+ </section>
+ <p class="empty-message panel" id="empty-message" hidden>まずは上の一覧から、使う区分を選択してください。</p>
+ <footer class="foot">入力はこの端末のブラウザ内に保存されます。チェックを外した区分は集計から除外されます。<div><button id="reset-btn" class="reset" type="button">入力を初期化する</button></div></footer>
+</main>
+<script>
+(function(){
+'use strict';
+const KEY='gakkai_warikan_v2';
+const names={employed:'職持ち',student:'学生',working_student:'学生（職持ち）',nondrinker_employed:'飲まない人（職持ち）',nondrinker_student:'飲まない人（学生）'};
+const ids=Object.keys(names);
+const defaultState=()=>({bill:0,groups:Object.fromEntries(ids.map((id,i)=>[id,{active:i<2,count:0,amount:0}]))});
+const safeInt=(v,max=999999999)=>Math.min(max,Math.max(0,Math.floor(Number(String(v??'').replace(/[^0-9]/g,''))||0)));
+const money=n=>Math.round(n).toLocaleString('ja-JP');
+const yen=n=>money(n)+'円';
+let state=defaultState();
+try{
+ const raw=JSON.parse(localStorage.getItem(KEY));
+ if(raw&&typeof raw==='object'&&raw.groups){
+  state.bill=safeInt(raw.bill);
+  ids.forEach(id=>{const g=raw.groups[id];if(g&&typeof g==='object')state.groups[id]={active:!!g.active,count:safeInt(g.count,500),amount:safeInt(g.amount)};});
+ }else{
+  const old=JSON.parse(localStorage.getItem('gakkai_warikan_v1'));
+  if(old&&Array.isArray(old.groups)){
+    state.bill=safeInt(old.bill);
+    old.groups.forEach(g=>{if(state.groups[g.id]){state.groups[g.id].count=safeInt(g.count,500);state.groups[g.id].amount=safeInt(g.amount);state.groups[g.id].active=state.groups[g.id].active||state.groups[g.id].count>0;}});
+  }
+ }
+}catch(e){}
+const billInput=document.getElementById('total');
+const cards=Object.fromEntries(ids.map(id=>[id,document.querySelector(`[data-group="${id}"]`)]));
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}};
+const active=()=>ids.filter(id=>state.groups[id].active);
+const totals=()=>active().reduce((s,id)=>{const g=state.groups[id];s.people+=g.count;s.collected+=g.count*g.amount;return s;},{people:0,collected:0});
+function updateSummary(){
+ const {people,collected}=totals(),dif=collected-state.bill;
+ document.getElementById('people').textContent=money(people)+'人';
+ document.getElementById('collected').textContent=yen(collected);
+ const el=document.getElementById('difference');el.className='stat-value';
+ if(state.bill===0)el.textContent='—';
+ else if(dif===0){el.textContent='ちょうど';el.classList.add('green');}
+ else if(dif>0){el.textContent='＋'+yen(dif);el.classList.add('orange');}
+ else{el.textContent='−'+yen(-dif);el.classList.add('red');}
+ document.getElementById('empty-message').hidden=active().length>0;
+ save();
+}
+function updateCard(id,updateInputs=true){
+ const g=state.groups[id],el=cards[id];
+ el.hidden=!g.active;
+ if(updateInputs){el.querySelector('[data-field="count"]').value=g.count;el.querySelector('[data-field="amount"]').value=money(g.amount);}
+ el.querySelector('.subtotal').textContent='小計 '+yen(g.count*g.amount);
+ el.querySelector('.group-foot').textContent=`${g.count}人 × ${yen(g.amount)} = ${yen(g.count*g.amount)}`;
+ el.querySelector('[data-delta-count="-1"]').disabled=g.count===0;
+ el.querySelectorAll('[data-delta-amount]')[0].disabled=g.amount===0;
+ el.querySelectorAll('[data-delta-amount]')[1].disabled=g.amount===0;
+}
+function render(){
+ billInput.value=state.bill?money(state.bill):'';
+ ids.forEach(id=>{document.querySelector(`[data-toggle="${id}"]`).checked=state.groups[id].active;updateCard(id);});
+ updateSummary();updateBillButtons();
+}
+document.querySelector('.choices').addEventListener('change',e=>{
+ const id=e.target.dataset.toggle;if(!id||!state.groups[id])return;
+ state.groups[id].active=e.target.checked;
+ updateCard(id);updateSummary();
+});
+document.getElementById('groups').addEventListener('click',e=>{
+ const button=e.target.closest('button');if(!button)return;
+ const card=button.closest('[data-group]');if(!card)return;
+ const id=card.dataset.group,g=state.groups[id];
+ if(button.dataset.deltaCount!==undefined)g.count=Math.max(0,Math.min(500,g.count+Number(button.dataset.deltaCount)));
+ else if(button.dataset.deltaAmount!==undefined)g.amount=Math.max(0,Math.min(999999999,g.amount+Number(button.dataset.deltaAmount)));
+ updateCard(id);updateSummary();
+});
+document.getElementById('groups').addEventListener('input',e=>{
+ const card=e.target.closest('[data-group]');if(!card)return;
+ const id=card.dataset.group,g=state.groups[id],field=e.target.dataset.field;
+ if(field==='count')g.count=safeInt(e.target.value,500);
+ else if(field==='amount')g.amount=safeInt(e.target.value);
+ else return;
+ updateCard(id,false);updateSummary();
+});
+document.getElementById('groups').addEventListener('focusout',e=>{
+ const card=e.target.closest('[data-group]');if(card&&e.target.dataset.field)updateCard(card.dataset.group);
+});
+const billButtons=[...document.querySelectorAll('[data-delta-bill]')];
+function updateBillButtons(){
+ billButtons.forEach(button=>{button.disabled=Number(button.dataset.deltaBill)<0&&state.bill===0;});
+}
+document.querySelector('.bill-button-row').addEventListener('click',e=>{
+ const button=e.target.closest('[data-delta-bill]');if(!button)return;
+ state.bill=safeInt(state.bill+Number(button.dataset.deltaBill));
+ billInput.value=state.bill?money(state.bill):'';
+ updateSummary();updateBillButtons();
+});
+billInput.addEventListener('input',()=>{state.bill=safeInt(billInput.value);updateSummary();updateBillButtons();});
+billInput.addEventListener('blur',()=>{billInput.value=state.bill?money(state.bill):'';});
+document.getElementById('reset-btn').addEventListener('click',()=>{if(!confirm('金額・人数・区分の選択を初期化しますか？'))return;state=defaultState();render();});
+render();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
